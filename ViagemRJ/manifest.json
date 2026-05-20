@@ -1,0 +1,20 @@
+{
+  "name": "BoraRachar",
+  "short_name": "BoraRachar",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#e9f2ef",
+  "theme_color": "#1b7f79",
+  "icons": [
+    {
+      "src": "assets/icons/brand.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "assets/icons/brand.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

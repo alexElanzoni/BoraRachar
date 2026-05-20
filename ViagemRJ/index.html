@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>BoraRachar — Divisão de gastos em viagem</title>
+    <link rel="icon" href="assets/icons/brand.png" type="image/png">
+    <link rel="apple-touch-icon" href="assets/icons/brand.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1b7f79">
+</head>
+<body>
+    
+
+    <div class="app-wrap">
+        <header class="topbar">
+            <div class="brand" role="banner">
+                <span class="brand__mark">
+                    <i class="fas fa-people-arrows"></i>
+                </span>
+                <div class="brand__text">
+                    <span class="brand__name">BoraRachar</span>
+                    <span class="brand__tag">Gastos de viagem em grupo</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="status-message" id="statusMessage" role="status" aria-live="polite"></div>
+
+        <main id="main">
+            <div id="telaInicial" class="welcome">
+                <h2>Uma viagem, uma conta só</h2>
+                <p class="welcome__lead">Crie um espaço da viagem e compartilhe o código no grupo. Todo mundo lança o que pagou e o app mostra quem acerta com quem no fim.</p>
+
+                <div class="choice-grid">
+                    <article class="choice-card choice-card--create" id="cardCriar">
+                        <div class="choice-card__icon">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <h3>Criar viagem</h3>
+                        <p>Nomeie a trip (ex.: Réveillon RJ) e receba um código para o grupo entrar.</p>
+                        <button type="button" id="btnMostrarCriar" class="btn btn-primary btn-block" aria-expanded="false" aria-controls="areaCriar">
+                            Criar nova viagem
+                        </button>
+                        <div id="areaCriar" class="card-form" hidden>
+                            <p class="card-form__hint">Digite o nome da viagem abaixo</p>
+                            <label class="sr-only" for="nomeViagem">Nome da viagem</label>
+                            <input type="text" id="nomeViagem" class="form-input" placeholder="Ex.: Búzios com a galera" autocomplete="off">
+                            <button type="button" id="confirmarCriar" class="btn btn-primary btn-block">Criar e gerar código</button>
+                        </div>
+                    </article>
+
+                    <article class="choice-card choice-card--join" id="cardEntrar">
+                        <div class="choice-card__icon">
+                            <i class="fas fa-sign-in-alt"></i>
+                        </div>
+                        <h3>Entrar na viagem</h3>
+                        <p>Já tem o código do WhatsApp? Cole aqui e entre no mesmo painel.</p>
+                        <button type="button" id="btnMostrarEntrar" class="btn btn-accent btn-block" aria-expanded="false" aria-controls="areaEntrar">
+                            Entrar com código
+                        </button>
+                        <div id="areaEntrar" class="card-form" hidden>
+                            <p class="card-form__hint">Cole o código da viagem</p>
+                            <label class="sr-only" for="codigoAcesso">Código da viagem</label>
+                            <input type="text" id="codigoAcesso" class="form-input input-code" placeholder="Ex.: ABC-12D" autocomplete="off">
+                            <button type="button" id="confirmarEntrar" class="btn btn-accent btn-block">Entrar na viagem</button>
+                        </div>
+                    </article>
+                </div>
+            </div>
+
+            <div id="telaGastos">
+                <div class="trip-strip">
+                    <div class="trip-strip__main">
+                        <div class="trip-strip__title">
+                            <i class="fas fa-suitcase-rolling"></i>
+                            <span>Viagem: <strong id="nomeViagemAtual"></strong></span>
+                        </div>
+                        <div class="code-chip">
+                            <span>Código</span>
+                            <code id="codigoViagemAtual">---</code>
+                            <button type="button" id="btnCopiarBadge" class="btn btn-small btn-primary">Copiar</button>
+                        </div>
+                    </div>
+                    <div class="trip-strip__actions">
+                        <button type="button" id="btnFinalizarViagem" class="btn btn-small btn-danger"><i class="fas fa-flag-checkered"></i> Finalizar</button>
+                        <button type="button" id="btnSairViagem" class="btn btn-small btn-ghost"><i class="fas fa-arrow-right-from-bracket"></i> Sair</button>
+                    </div>
+                </div>
+
+                <div class="app-container">
+                    <div class="main-content">
+                        <section class="panel">
+                            <h2 class="section-title">
+                                <i class="fas fa-receipt"></i> Novo gasto
+                            </h2>
+                            <form id="expenseForm">
+                                <input type="text" id="description" class="form-input" placeholder="O que foi? (hotel, Uber, jantar…)" required>
+                                <div class="form-grid">
+                                    <input type="number" id="amount" class="form-input" step="0.01" min="0" placeholder="Valor total (R$)" required>
+                                    <input type="date" id="date" class="form-input" required>
+                                </div>
+                                <select id="paidBy" class="form-select" required></select>
+                                <p class="field-hint">Dividir entre</p>
+                                <div class="checkbox-group" id="participantsContainer"><div class="loading">Carregando pessoas…</div></div>
+                                <button type="submit" class="btn btn-primary btn-block">Adicionar gasto</button>
+                            </form>
+                        </section>
+                        <section class="panel">
+                            <h2 class="section-title">
+                                <i class="fas fa-history"></i> Histórico
+                            </h2>
+                            <div id="expensesList"><div class="loading">Carregando gastos…</div></div>
+                        </section>
+                    </div>
+                    <aside class="sidebar">
+                        <section class="panel">
+                            <h2 class="section-title">
+                                <i class="fas fa-exchange-alt"></i> Quem paga quem
+                            </h2>
+                            <div id="balanceSummary"><div class="loading">Calculando…</div></div>
+                        </section>
+                        <section class="panel">
+                            <h2 class="section-title">
+                                <i class="fas fa-users"></i> Grupo
+                            </h2>
+                            <div class="add-person-form">
+                                <input type="text" id="newPersonName" class="form-input" placeholder="Nome no grupo" autocomplete="name">
+                                <button type="button" id="addPersonBtn" class="btn btn-accent btn-small">Adicionar</button>
+                            </div>
+                            <div id="peopleList"><div class="loading">Carregando…</div></div>
+                        </section>
+                        <section class="panel panel--compact">
+                            <div id="connectionStatus" class="conn-pill">Conectando ao Supabase…</div>
+                        </section>
+                    </aside>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+	    <p>BoraRachar — divisão de gastos em viagem</p
+            <p>Desenvolvido por Alex E. Lanzoni | alexlanzoni.dev@gmail.com</p>
+        </footer>
+    </div>
+
+    <div id="modalCodigo" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalCodigoTitulo">
+        <div class="modal-content">
+            <i class="fas fa-share-alt modal__hero-icon"></i>
+            <h3 id="modalCodigoTitulo">Código do grupo</h3>
+            <p>Manda no WhatsApp: todo mundo escolhe <strong>Entrar com código</strong> e cola abaixo.</p>
+            <div class="modal-code-box">
+                <strong id="codigoGerado">XXXX-XX</strong>
+            </div>
+            <div class="modal-actions">
+                <button type="button" id="btnCopiarModal" class="btn btn-accent btn-block">Copiar código</button>
+                <button type="button" id="btnFecharModal" class="btn btn-primary btn-block">Ir para os gastos</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(console.log);
+        }
+    </script>
+</body>
+</html>
